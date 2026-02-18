@@ -10,12 +10,12 @@ echo "=== OpenClaw Bootstrap ==="
 # Default model
 MODEL="${MODEL:-groq/llama-3.3-70b-versatile}"
 
-# Config goes in home directory
-CONFIG_DIR="/home/node/.openclaw"
+# Config goes in home directory  
+CONFIG_DIR="$HOME/.openclaw"
 mkdir -p "$CONFIG_DIR"
 
-# Create config.json5 (OpenClaw uses JSON5, not YAML!)
-cat > "$CONFIG_DIR/config.json5" << EOF
+# Create config.json5
+cat > "$CONFIG_DIR/config.json5" << CONF
 {
   model: "$MODEL",
   channels: {
@@ -27,35 +27,12 @@ cat > "$CONFIG_DIR/config.json5" << EOF
     }
   }
 }
-EOF
+CONF
 
-echo "Config created at $CONFIG_DIR/config.json5:"
+echo "Config created:"
 cat "$CONFIG_DIR/config.json5"
+
 echo ""
-
-# Create workspace
-WORKSPACE="/home/node/.openclaw/workspace"
-mkdir -p "$WORKSPACE"
-
-if [ ! -f "$WORKSPACE/SOUL.md" ]; then
-  cat > "$WORKSPACE/SOUL.md" << 'SOUL'
-# Your AI Assistant
-
-You are a helpful personal AI assistant.
-
-## Personality
-- Friendly and helpful
-- Concise but thorough when needed
-- Honest about limitations
-
-## Guidelines
-- Be genuinely useful
-- Remember context from conversation
-- Ask for clarification when needed
-SOUL
-  echo "Created default SOUL.md"
-fi
-
 echo "Starting OpenClaw gateway..."
 cd /app
 exec node dist/index.js gateway
