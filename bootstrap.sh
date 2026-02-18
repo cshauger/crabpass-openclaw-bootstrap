@@ -1,51 +1,44 @@
 #!/bin/sh
 set -e
 
-CONFIG_DIR="${OPENCLAW_STATE_DIR:-/data/.openclaw}"
-WORKSPACE_DIR="${OPENCLAW_WORKSPACE_DIR:-/data/workspace}"
-
 echo "=== OpenClaw Bootstrap ==="
-echo "Config: $CONFIG_DIR"
-echo "Workspace: $WORKSPACE_DIR"
 
 # Required vars
 : "${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN required}"
 : "${OWNER_TELEGRAM_ID:?OWNER_TELEGRAM_ID required}"
 
-# Default model - use Groq free tier
+# Default model
 MODEL="${MODEL:-groq/llama-3.3-70b-versatile}"
 
-# Create config.yaml
+# Config goes in home directory
+CONFIG_DIR="/home/node/.openclaw"
 mkdir -p "$CONFIG_DIR"
-cat > "$CONFIG_DIR/config.yaml" << EOF
-model: $MODEL
 
-channels:
-  telegram:
-    token: $TELEGRAM_BOT_TOKEN
-    allowedUsers:
-      - "$OWNER_TELEGRAM_ID"
+# Create config.json5 (OpenClaw uses JSON5, not YAML!)
+cat > "$CONFIG_DIR/config.json5" << EOF
+{
+  model: "$MODEL",
+  channels: {
+    telegram: {
+      enabled: true,
+      botToken: "$TELEGRAM_BOT_TOKEN",
+      dmPolicy: "allowlist",
+      allowFrom: ["$OWNER_TELEGRAM_ID"]
+    }
+  }
+}
 EOF
 
-# Add API keys if provided
-if [ -n "$GROQ_API_KEY" ]; then
-  echo "groqApiKey: $GROQ_API_KEY" >> "$CONFIG_DIR/config.yaml"
-fi
-if [ -n "$ANTHROPIC_API_KEY" ]; then
-  echo "anthropicApiKey: $ANTHROPIC_API_KEY" >> "$CONFIG_DIR/config.yaml"
-fi
-if [ -n "$OPENAI_API_KEY" ]; then
-  echo "openaiApiKey: $OPENAI_API_KEY" >> "$CONFIG_DIR/config.yaml"
-fi
-
-echo "Config generated:"
-cat "$CONFIG_DIR/config.yaml"
+echo "Config created at $CONFIG_DIR/config.json5:"
+cat "$CONFIG_DIR/config.json5"
 echo ""
 
-# Create workspace files if not exist
-mkdir -p "$WORKSPACE_DIR"
-if [ ! -f "$WORKSPACE_DIR/SOUL.md" ]; then
-  cat > "$WORKSPACE_DIR/SOUL.md" << 'SOUL'
+# Create workspace
+WORKSPACE="/home/node/.openclaw/workspace"
+mkdir -p "$WORKSPACE"
+
+if [ ! -f "$WORKSPACE/SOUL.md" ]; then
+  cat > "$WORKSPACE/SOUL.md" << 'SOUL'
 # Your AI Assistant
 
 You are a helpful personal AI assistant.
