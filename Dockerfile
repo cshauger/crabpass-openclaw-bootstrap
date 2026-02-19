@@ -1,27 +1,20 @@
-# Stage 1: Build
-FROM node:22-bookworm AS builder
+# OpenClaw bot with env-based configuration
+FROM ghcr.io/openclaw/openclaw:latest
 
-RUN corepack enable
-WORKDIR /app
+USER root
 
-RUN git clone --depth 1 https://github.com/openclaw/openclaw.git . && \
-    pnpm install --frozen-lockfile && \
-    OPENCLAW_A2UI_SKIP_MISSING=1 pnpm build && \
-    pnpm prune --prod
+# Create directories
+RUN mkdir -p /data/.openclaw /data/.openclaw/workspace && \
+    chown -R 1000:1000 /data
 
-# Stage 2: Runtime (slim)
-FROM node:22-slim
-
-WORKDIR /app
-
-# Copy only production files
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-
+# Copy bootstrap script
 COPY bootstrap.sh /bootstrap.sh
 RUN chmod +x /bootstrap.sh
 
-ENV NODE_ENV=production
+USER 1000
+WORKDIR /app
 
-CMD ["/bootstrap.sh"]
+ENV OPENCLAW_STATE_DIR=/data/.openclaw
+ENV OPENCLAW_CONFIG_PATH=/data/.openclaw/config.json5
+
+ENTRYPOINT ["/bootstrap.sh"]
