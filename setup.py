@@ -27,8 +27,19 @@ config = {
         }
     }
 }
+# Build allowlist from owner + additional users
+allowed_users = []
 if owner_id:
-    config["channels"]["telegram"]["allowFrom"] = [owner_id]
+    allowed_users.append(owner_id)
+# Add additional users from ALLOWED_USERS env var (comma-separated)
+extra_users = os.environ.get('ALLOWED_USERS', '')
+if extra_users:
+    for uid in extra_users.split(','):
+        uid = uid.strip()
+        if uid and uid not in allowed_users:
+            allowed_users.append(uid)
+if allowed_users:
+    config["channels"]["telegram"]["allowFrom"] = allowed_users
 
 config_data = json.dumps(config, indent=2)
 
