@@ -5,13 +5,16 @@ import json
 owner_id = os.environ.get('OWNER_TELEGRAM_ID', '')
 model = os.environ.get('OPENCLAW_MODEL', os.environ.get('MODEL', 'groq/llama-3.3-70b-versatile'))
 
-# Correct config structure per OpenClaw docs
+# Config with compaction settings
 config = {
     "gateway": {"mode": "local"},
     "agents": {
         "defaults": {
             "model": {
                 "primary": model
+            },
+            "compaction": {
+                "reserveTokensFloor": 8000
             }
         }
     },
