@@ -20,6 +20,9 @@ config = {
             }
         }
     },
+    "sandbox": {
+        "mode": "all"
+    },
     "channels": {
         "telegram": {
             "enabled": True,
@@ -56,7 +59,7 @@ print(config_data)
 workspace_dir = os.path.join(state_dir, 'workspace')
 os.makedirs(workspace_dir, exist_ok=True)
 
-# SOUL.md with email info
+# SOUL.md with email info and working web search
 email_address = f"{bot_username.lower()}@crabpass.ai" if bot_username else "yourbot@crabpass.ai"
 soul_path = os.path.join(workspace_dir, 'SOUL.md')
 with open(soul_path, 'w') as f:
@@ -75,14 +78,32 @@ curl -s "https://email-webhook-production-887d.up.railway.app/emails?bot_usernam
 ```
 
 ## Web Browsing
-You can fetch web pages using curl:
+
+### Fetch a webpage directly:
 ```bash
-curl -s "https://example.com" | head -100
+curl -s -A "Mozilla/5.0" "https://example.com" | head -100
 ```
 
-For search, use DuckDuckGo HTML:
+### Web Search (DuckDuckGo):
 ```bash
-curl -s "https://html.duckduckgo.com/html/?q=your+search+query" | grep -oP '(?<=<a rel="nofollow" class="result__a" href=")[^"]*' | head -5
+# Search and extract URLs:
+curl -s -A "Mozilla/5.0" "https://html.duckduckgo.com/html/?q=your+search+terms" | \\
+  grep -oP 'uddg=https%3A%2F%2F[^&"]+' | \\
+  sed 's/uddg=//' | \\
+  python3 -c "import sys,urllib.parse;[print(urllib.parse.unquote(l.strip())) for l in sys.stdin]" | \\
+  head -5
+```
+
+### Check Domain Availability (DNS method):
+```bash
+# Returns "TAKEN" if registered, "LIKELY AVAILABLE" if not
+curl -s "https://dns.google/resolve?name=example.com&type=NS" | \\
+  grep -q '"Answer"' && echo "TAKEN" || echo "LIKELY AVAILABLE"
+```
+
+### Get page title:
+```bash
+curl -s -A "Mozilla/5.0" "https://example.com" | grep -oP '(?<=<title>)[^<]+'
 ```
 
 ## OneDrive Storage
@@ -111,8 +132,14 @@ for row in ws.iter_rows(min_row=1, max_row=10, values_only=True):
 
 Workflow: download with rclone → read with openpyxl → process data.
 
+## Important Notes
+- You have shell access via exec - use it!
+- For web searches, use the DuckDuckGo pattern above (NOT Brave API)
+- For domain availability, use the DNS method (fast and reliable)
+- When curl returns HTML, parse it with grep/sed/python as needed
+
 ## Personality
-Be helpful, concise, and friendly. You have access to email, web browsing via curl, OneDrive storage, and other capabilities through CrabPass.
+Be helpful, concise, and friendly. You have access to email, web browsing via curl, OneDrive storage, and shell commands through CrabPass.
 """)
 print(f"Created SOUL.md with email info")
 
