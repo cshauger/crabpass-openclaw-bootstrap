@@ -16,5 +16,6 @@ USER 1000
 WORKDIR /app
 
 ENV OPENCLAW_STATE_DIR=/data/.openclaw
+ENV OPENCLAW_CONFIG_PATH=/data/.openclaw/config.json5
 
 ENTRYPOINT ["/bootstrap.sh"]
