@@ -5,12 +5,14 @@ import json
 
 config_b64 = os.environ.get('OPENCLAW_CONFIG_B64', '')
 owner_id = os.environ.get('OWNER_TELEGRAM_ID', '')
+model = os.environ.get('OPENCLAW_MODEL', 'groq/llama-3.3-70b-versatile')
 
 if config_b64:
     config_data = base64.b64decode(config_b64).decode()
 else:
-    # Build config - NO model key at root (use ANTHROPIC_MODEL env var instead)
+    # Build config
     config = {
+        "defaultModel": model,
         "gateway": {"mode": "local"},
         "channels": {
             "telegram": {
