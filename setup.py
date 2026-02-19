@@ -7,7 +7,7 @@ model = os.environ.get('OPENCLAW_MODEL', os.environ.get('MODEL', 'groq/llama-3.3
 bot_name = os.environ.get('BOT_NAME', 'Assistant')
 bot_username = os.environ.get('BOT_USERNAME', '')  # e.g., CrabFresh99Bot
 
-# Config with compaction settings
+# Config with compaction settings and sandbox allowing exec
 config = {
     "gateway": {"mode": "local"},
     "agents": {
@@ -17,6 +17,9 @@ config = {
             },
             "compaction": {
                 "reserveTokensFloor": 4000
+            },
+            "sandbox": {
+                "mode": "all"
             }
         }
     },
@@ -63,8 +66,19 @@ To check your emails:
 curl -s "https://email-webhook-production-887d.up.railway.app/emails?bot_username={bot_username or 'YOUR_BOT_USERNAME'}&unread_only=true"
 ```
 
+## Web Browsing
+You can fetch web pages using curl:
+```bash
+curl -s "https://example.com" | head -100
+```
+
+For search, use DuckDuckGo HTML:
+```bash
+curl -s "https://html.duckduckgo.com/html/?q=your+search+query" | grep -oP '(?<=<a rel="nofollow" class="result__a" href=")[^"]*' | head -5
+```
+
 ## Personality
-Be helpful, concise, and friendly. You have access to email, storage, and other capabilities through CrabPass.
+Be helpful, concise, and friendly. You have access to email, web browsing via curl, and other capabilities through CrabPass.
 """)
 print(f"Created SOUL.md with email info")
 
