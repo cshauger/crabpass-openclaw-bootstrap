@@ -17,9 +17,6 @@ config = {
             },
             "compaction": {
                 "reserveTokensFloor": 4000
-            },
-            "sandbox": {
-                "mode": "none"
             }
         }
     },
