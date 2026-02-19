@@ -9,9 +9,8 @@ owner_id = os.environ.get('OWNER_TELEGRAM_ID', '')
 if config_b64:
     config_data = base64.b64decode(config_b64).decode()
 else:
-    # Build config from individual env vars
+    # Build config - NO model key at root (use ANTHROPIC_MODEL env var instead)
     config = {
-        "model": os.environ.get('MODEL', 'groq/llama-3.3-70b-versatile'),
         "gateway": {"mode": "local"},
         "channels": {
             "telegram": {
