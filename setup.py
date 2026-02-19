@@ -98,6 +98,19 @@ rclone copy "onedrive:Spex/filename.xlsx" /tmp/
 rclone copy /tmp/myfile.txt onedrive:Spex/
 ```
 
+## Reading Excel Files
+You can read Excel files using Python openpyxl:
+```python
+import openpyxl
+wb = openpyxl.load_workbook('/tmp/file.xlsx', data_only=True)
+print(wb.sheetnames)
+ws = wb.active
+for row in ws.iter_rows(min_row=1, max_row=10, values_only=True):
+    print(row)
+```
+
+Workflow: download with rclone → read with openpyxl → process data.
+
 ## Personality
 Be helpful, concise, and friendly. You have access to email, web browsing via curl, OneDrive storage, and other capabilities through CrabPass.
 """)
