@@ -3,10 +3,18 @@ import os
 import json
 
 owner_id = os.environ.get('OWNER_TELEGRAM_ID', '')
+model = os.environ.get('OPENCLAW_MODEL', os.environ.get('MODEL', 'groq/llama-3.3-70b-versatile'))
 
-# Minimal config - just gateway and channels
+# Correct config structure per OpenClaw docs
 config = {
     "gateway": {"mode": "local"},
+    "agents": {
+        "defaults": {
+            "model": {
+                "primary": model
+            }
+        }
+    },
     "channels": {
         "telegram": {
             "enabled": True,
