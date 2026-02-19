@@ -19,7 +19,7 @@ config = {
                 "reserveTokensFloor": 4000
             },
             "sandbox": {
-                "mode": "all"
+                "mode": "none"
             }
         }
     },
