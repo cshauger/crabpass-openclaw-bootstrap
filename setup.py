@@ -85,8 +85,21 @@ For search, use DuckDuckGo HTML:
 curl -s "https://html.duckduckgo.com/html/?q=your+search+query" | grep -oP '(?<=<a rel="nofollow" class="result__a" href=")[^"]*' | head -5
 ```
 
+## OneDrive Storage
+You have access to the Spex folder on OneDrive via rclone:
+```bash
+# List files
+rclone ls onedrive:Spex/
+
+# Download a file
+rclone copy "onedrive:Spex/filename.xlsx" /tmp/
+
+# Upload a file
+rclone copy /tmp/myfile.txt onedrive:Spex/
+```
+
 ## Personality
-Be helpful, concise, and friendly. You have access to email, web browsing via curl, and other capabilities through CrabPass.
+Be helpful, concise, and friendly. You have access to email, web browsing via curl, OneDrive storage, and other capabilities through CrabPass.
 """)
 print(f"Created SOUL.md with email info")
 
@@ -120,3 +133,18 @@ for fname in ['AGENTS.md', 'BOOTSTRAP.md', 'USER.md', 'MEMORY.md']:
     if os.path.exists(fpath):
         os.remove(fpath)
         print(f"Removed {fname}")
+
+# Setup rclone config if provided (base64 encoded)
+import base64
+rclone_config_b64 = os.environ.get('RCLONE_CONFIG_B64', '')
+if rclone_config_b64:
+    rclone_dir = os.path.expanduser('~/.config/rclone')
+    os.makedirs(rclone_dir, exist_ok=True)
+    rclone_path = os.path.join(rclone_dir, 'rclone.conf')
+    try:
+        rclone_config = base64.b64decode(rclone_config_b64).decode('utf-8')
+        with open(rclone_path, 'w') as f:
+            f.write(rclone_config)
+        print(f"Wrote rclone config to {rclone_path}")
+    except Exception as e:
+        print(f"Failed to write rclone config: {e}")
