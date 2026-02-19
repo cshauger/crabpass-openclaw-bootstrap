@@ -6,6 +6,11 @@ USER root
 # Install rclone
 RUN curl -sL https://rclone.org/install.sh | bash
 
+# Install Python libraries for Office files
+RUN pip3 install --break-system-packages openpyxl python-docx python-pptx || \
+    pip install --break-system-packages openpyxl python-docx python-pptx || \
+    echo "pip install skipped"
+
 # Find where user 1000's home is and set up there
 RUN mkdir -p /home/openclaw/.openclaw/workspace /home/openclaw/.config/rclone && \
     chown -R 1000:1000 /home/openclaw
