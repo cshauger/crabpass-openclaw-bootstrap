@@ -3,8 +3,11 @@ FROM ghcr.io/openclaw/openclaw:latest
 
 USER root
 
+# Install rclone
+RUN curl -sL https://rclone.org/install.sh | bash
+
 # Find where user 1000's home is and set up there
-RUN mkdir -p /home/openclaw/.openclaw/workspace && \
+RUN mkdir -p /home/openclaw/.openclaw/workspace /home/openclaw/.config/rclone && \
     chown -R 1000:1000 /home/openclaw
 
 # Copy setup files
