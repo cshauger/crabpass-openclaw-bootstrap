@@ -33,7 +33,7 @@ if owner_id:
 config_data = json.dumps(config, indent=2)
 
 # Write config
-state_dir = os.environ.get('OPENCLAW_STATE_DIR', os.path.expanduser('~/.openclaw'))
+state_dir = os.environ.get('OPENCLAW_STATE_DIR', '/home/openclaw/.openclaw')
 os.makedirs(state_dir, exist_ok=True)
 config_path = os.path.join(state_dir, 'config.json5')
 with open(config_path, 'w') as f:
