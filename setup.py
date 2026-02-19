@@ -4,7 +4,6 @@ import base64
 import json
 
 config_b64 = os.environ.get('OPENCLAW_CONFIG_B64', '')
-telegram_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
 owner_id = os.environ.get('OWNER_TELEGRAM_ID', '')
 
 if config_b64:
@@ -25,8 +24,8 @@ else:
         config["channels"]["telegram"]["allowFrom"] = [owner_id]
     config_data = json.dumps(config, indent=2)
 
-# Write config
-config_dir = os.path.expanduser('~/.openclaw')
+# Use OPENCLAW_STATE_DIR or default
+config_dir = os.environ.get('OPENCLAW_STATE_DIR', os.path.expanduser('~/.openclaw'))
 os.makedirs(config_dir, exist_ok=True)
 config_path = os.path.join(config_dir, 'config.json5')
 with open(config_path, 'w') as f:
