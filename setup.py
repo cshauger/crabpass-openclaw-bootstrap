@@ -7,7 +7,7 @@ model = os.environ.get('OPENCLAW_MODEL', os.environ.get('MODEL', 'groq/llama-3.3
 bot_name = os.environ.get('BOT_NAME', 'Assistant')
 bot_username = os.environ.get('BOT_USERNAME', '')  # e.g., CrabFresh99Bot
 
-# Config with compaction settings and sandbox allowing exec
+# Config with compaction settings
 config = {
     "gateway": {"mode": "local"},
     "agents": {
@@ -19,9 +19,6 @@ config = {
                 "reserveTokensFloor": 4000
             }
         }
-    },
-    "sandbox": {
-        "mode": "all"
     },
     "channels": {
         "telegram": {
