@@ -3,7 +3,7 @@
 ## OneDrive (rclone) ✅
 - Binary: `/home/openclaw/homebrew/rclone`
 - Config: `/workspace/rclone.conf`
-- Folder: `onedrive:Spex/` — this is your shared workspace with Curtis
+- Folder: `onedrive:Spex/` — shared workspace with Curtis
 - Status: Working
 
 **Usage:**
@@ -18,19 +18,32 @@
 /home/openclaw/homebrew/rclone --config /workspace/rclone.conf copy /tmp/myfile.xlsx onedrive:Spex/
 ```
 
-**Important:** You HAVE access to Spex. Don't second-guess this. If a command fails, troubleshoot the specific error — don't assume you lack access.
+**Important:** You HAVE access to Spex. If a command fails, troubleshoot the specific error — don't assume you lack access.
+
+## Web Search (Serper) ✅
+- API Key: Available as `SERPER_API_KEY` environment variable
+- Free tier: 2,500 queries (one-time credit)
+
+**Usage:**
+```bash
+curl -s -X POST 'https://google.serper.dev/search' \
+  -H 'X-API-KEY: '"$SERPER_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"q": "your search query"}'
+```
+
+**Do NOT use curl to scrape DuckDuckGo** — it's unreliable. Use Serper instead.
 
 ## What You Can Do
 - Read/write files to OneDrive Spex folder
+- Web searches via Serper API
 - Create Excel files (use `openpyxl` Python library)
-- Web searches and research
 - File analysis and data processing
 
 ## What You Cannot Do
 - Send emails (no SendGrid configured)
 - Access Gmail
 - Access Airtable
-- Access other cloud services
 
 ## Creating Excel Files
 ```python
