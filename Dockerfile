@@ -1,5 +1,6 @@
 # OpenClaw bot with env-based configuration
-FROM ghcr.io/openclaw/openclaw:latest
+# Pin to specific version for new model support
+FROM ghcr.io/openclaw/openclaw:2026.2.3
 
 USER root
 
