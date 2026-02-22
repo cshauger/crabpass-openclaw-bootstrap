@@ -8,7 +8,7 @@ RUN curl -sL https://rclone.org/install.sh | bash
 
 # Install pip and Python libraries for Office files
 RUN apt-get update && apt-get install -y python3-pip && \
-    pip3 install --break-system-packages openpyxl python-docx python-pptx && \
+    pip3 install --break-system-packages openpyxl python-docx python-pptx pandas xlsxwriter && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Find where user 1000's home is and set up there
