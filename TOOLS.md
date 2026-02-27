@@ -1,5 +1,39 @@
 # TOOLS.md - CrabFresh Local Notes
 
+## Email (SendGrid) ✅
+- API Key: Set as `SENDGRID_API_KEY` environment variable
+- From address: `crabfresh99bot@crabpass.ai`
+- Domain: crabpass.ai (verified)
+
+**Send email:**
+```python
+import os
+import requests
+
+def send_email(to_email, subject, body):
+    api_key = os.environ.get("SENDGRID_API_KEY")
+    if not api_key:
+        return False, "SENDGRID_API_KEY not set"
+    
+    response = requests.post(
+        "https://api.sendgrid.com/v3/mail/send",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "personalizations": [{"to": [{"email": to_email}]}],
+            "from": {"email": "crabfresh99bot@crabpass.ai", "name": "CrabFresh"},
+            "subject": subject,
+            "content": [{"type": "text/plain", "value": body}]
+        }
+    )
+    return response.status_code == 202, response.text
+
+# Example:
+# success, msg = send_email("recipient@example.com", "Test", "Hello from CrabFresh!")
+```
+
 ## OneDrive (rclone) ✅
 - Binary: `/home/openclaw/homebrew/rclone`
 - Config: `/workspace/rclone.conf`
@@ -35,14 +69,14 @@ curl -s -X POST 'https://google.serper.dev/search' \
 **Do NOT use curl to scrape DuckDuckGo** — it's unreliable. Use Serper instead.
 
 ## What You Can Do
+- Send emails via SendGrid (requires SENDGRID_API_KEY env var)
 - Read/write files to OneDrive Spex folder
 - Web searches via Serper API
 - Create Excel files (use `openpyxl` Python library)
 - File analysis and data processing
 
 ## What You Cannot Do
-- Send emails (no SendGrid configured)
-- Access Gmail
+- Access Gmail (read-only, no sending)
 - Access Airtable
 
 ## Creating Excel Files
