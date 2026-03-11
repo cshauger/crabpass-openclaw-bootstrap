@@ -20,6 +20,10 @@ COPY setup.py /setup.py
 COPY bootstrap.sh /bootstrap.sh
 RUN chmod +x /bootstrap.sh /setup.py
 
+# Copy workspace files (memory, identity, etc.)
+COPY *.md /home/openclaw/.openclaw/workspace/
+RUN chown -R 1000:1000 /home/openclaw/.openclaw/workspace/
+
 USER 1000
 WORKDIR /app
 
