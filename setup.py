@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import json
+import base64
 
 owner_id = os.environ.get('OWNER_TELEGRAM_ID', '')
 model = os.environ.get('OPENCLAW_MODEL', os.environ.get('MODEL', 'groq/llama-3.3-70b-versatile'))
@@ -53,10 +54,11 @@ os.makedirs(memory_dir, exist_ok=True)
 
 email_address = f"{bot_username.lower()}@crabpass.ai" if bot_username else "yourbot@crabpass.ai"
 
-# AGENTS.md - Memory instructions
+# AGENTS.md - Only create if doesn't exist
 agents_path = os.path.join(workspace_dir, 'AGENTS.md')
-with open(agents_path, 'w') as f:
-    f.write(f"""# AGENTS.md
+if not os.path.exists(agents_path):
+    with open(agents_path, 'w') as f:
+        f.write(f"""# AGENTS.md
 
 ## Memory System
 You wake up fresh each session. These files are your continuity:
@@ -75,9 +77,11 @@ You wake up fresh each session. These files are your continuity:
 - If someone says "remember this", write it to a file
 - Update memory files before session ends
 """)
-print("Created AGENTS.md")
+    print("Created AGENTS.md")
+else:
+    print("AGENTS.md exists, preserving")
 
-# MEMORY.md - Long-term memory
+# MEMORY.md - Only create if doesn't exist
 memory_path = os.path.join(workspace_dir, 'MEMORY.md')
 if not os.path.exists(memory_path):
     with open(memory_path, 'w') as f:
@@ -98,11 +102,14 @@ if not os.path.exists(memory_path):
 *Updated: (date)*
 """)
     print("Created MEMORY.md")
+else:
+    print("MEMORY.md exists, preserving")
 
-# SOUL.md
+# SOUL.md - Only create if doesn't exist
 soul_path = os.path.join(workspace_dir, 'SOUL.md')
-with open(soul_path, 'w') as f:
-    f.write(f"""# {bot_name}
+if not os.path.exists(soul_path):
+    with open(soul_path, 'w') as f:
+        f.write(f"""# {bot_name}
 
 You are a helpful AI assistant powered by CrabPass.
 
@@ -114,37 +121,17 @@ Your email address is: **{email_address}**
 curl -s "https://email-webhook-production-887d.up.railway.app/emails?bot_username={bot_username or 'YOUR_BOT_USERNAME'}&unread_only=true"
 ```
 
-## Web Browsing
-
-### Fetch a webpage:
-```bash
-curl -s -A "Mozilla/5.0" "https://example.com" | head -100
-```
-
-### Web Search (DuckDuckGo):
-```bash
-curl -s -A "Mozilla/5.0" "https://html.duckduckgo.com/html/?q=your+search+terms" | \\
-  grep -oP 'uddg=https%3A%2F%2F[^&"]+' | \\
-  sed 's/uddg=//' | \\
-  python3 -c "import sys,urllib.parse;[print(urllib.parse.unquote(l.strip())) for l in sys.stdin]" | \\
-  head -5
-```
-
-### Check Domain Availability:
-```bash
-curl -s "https://dns.google/resolve?name=example.com&type=NS" | \\
-  grep -q '"Answer"' && echo "TAKEN" || echo "LIKELY AVAILABLE"
-```
-
 ## Important
 - Read AGENTS.md for memory instructions
+- Read TOOLS.md for available integrations
 - Write important info to memory files
-- Use shell commands via exec - you have full access
 
 ## Personality
 Be helpful, concise, and friendly.
 """)
-print("Created SOUL.md")
+    print("Created SOUL.md")
+else:
+    print("SOUL.md exists, preserving")
 
 # Email skill
 skills_dir = os.path.join(workspace_dir, 'skills', 'email')
@@ -167,7 +154,7 @@ Add `&unread_only=true` for unread only.
 curl -s -X POST "https://email-webhook-production-887d.up.railway.app/emails/EMAIL_ID/read"
 ```
 """)
-print("Created email skill")
+print("Created/updated email skill")
 
 # Only remove BOOTSTRAP.md (not needed after first boot)
 bootstrap_path = os.path.join(workspace_dir, 'BOOTSTRAP.md')
@@ -176,7 +163,6 @@ if os.path.exists(bootstrap_path):
     print("Removed BOOTSTRAP.md")
 
 # Setup rclone if provided
-import base64
 rclone_config_b64 = os.environ.get('RCLONE_CONFIG_B64', '')
 if rclone_config_b64:
     rclone_dir = os.path.expanduser('~/.config/rclone')
@@ -186,6 +172,6 @@ if rclone_config_b64:
         rclone_config = base64.b64decode(rclone_config_b64).decode('utf-8')
         with open(rclone_path, 'w') as f:
             f.write(rclone_config)
-        print(f"Wrote rclone config")
+        print("Wrote rclone config")
     except Exception as e:
         print(f"Failed to write rclone config: {e}")
