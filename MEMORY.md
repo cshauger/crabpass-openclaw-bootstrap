@@ -39,6 +39,12 @@
 - Railway project: ClawBot Factory
 - Repos: cshauger/openclaw-workspace, cshauger/shog-bot, cshauger/crabpass-openclaw-bootstrap
 
+## DigitalOcean Infrastructure
+- Droplet IP: 64.23.225.208
+- Nextcloud: Snap installed on droplet
+- Nextcloud Admin: admin / ClawSign2026!
+- Root password: (emailed 2026-03-09)
+
 ## Key Contacts
 - Curtis Telegram ID: 8259734518
 - Curtis email: cshauger@gmail.com
