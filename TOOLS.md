@@ -4,33 +4,30 @@
 - Bot: @CrabFresh99Bot / @Shog99Bot (depending on deployment)
 - Curtis's user ID: 8259734518
 
-## Nextcloud (File Storage)
-- Server: 64.23.225.208
-- WebDAV URL: https://64.23.225.208/remote.php/dav/files/admin/
-- Credentials: Set NEXTCLOUD_USER and NEXTCLOUD_PASS env vars in Railway
-
-**Upload file:**
-```bash
-curl -k -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
-  -T /path/to/file.txt \
-  "https://64.23.225.208/remote.php/dav/files/admin/file.txt"
-```
+## OneDrive (rclone)
+- Remote: `onedrive:`
+- Folder: `onedrive:Spex/` (Curtis's boundary - only access this folder)
+- Config: Auto-configured from RCLONE_CONFIG_B64 env var
 
 **List files:**
 ```bash
-curl -k -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
-  -X PROPFIND \
-  "https://64.23.225.208/remote.php/dav/files/admin/"
+rclone ls onedrive:Spex/
+```
+
+**Upload file:**
+```bash
+rclone copy /path/to/file.txt onedrive:Spex/
 ```
 
 **Download file:**
 ```bash
-curl -k -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
-  -o output.txt \
-  "https://64.23.225.208/remote.php/dav/files/admin/file.txt"
+rclone copy onedrive:Spex/file.txt /local/path/
 ```
 
-Note: -k flag for self-signed cert (if applicable)
+## Nextcloud (Alternative)
+- Server: 64.23.225.208
+- WebDAV URL: https://64.23.225.208/remote.php/dav/files/admin/
+- Credentials: Set NEXTCLOUD_USER and NEXTCLOUD_PASS env vars
 
 ## SendGrid
 - Domain: crabpass.ai (verified)
@@ -45,4 +42,4 @@ Note: -k flag for self-signed cert (if applicable)
 
 ---
 
-All secrets via Railway env vars. No plaintext credentials in repo.
+All secrets via Railway env vars.
