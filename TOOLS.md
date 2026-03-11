@@ -6,26 +6,26 @@
 
 ## Nextcloud (File Storage)
 - Server: 64.23.225.208
-- Admin: admin / ClawSign2026!
 - WebDAV URL: https://64.23.225.208/remote.php/dav/files/admin/
+- Credentials: Set NEXTCLOUD_USER and NEXTCLOUD_PASS env vars in Railway
 
 **Upload file:**
 ```bash
-curl -k -u "admin:ClawSign2026!" \
+curl -k -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
   -T /path/to/file.txt \
   "https://64.23.225.208/remote.php/dav/files/admin/file.txt"
 ```
 
 **List files:**
 ```bash
-curl -k -u "admin:ClawSign2026!" \
+curl -k -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
   -X PROPFIND \
   "https://64.23.225.208/remote.php/dav/files/admin/"
 ```
 
 **Download file:**
 ```bash
-curl -k -u "admin:ClawSign2026!" \
+curl -k -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
   -o output.txt \
   "https://64.23.225.208/remote.php/dav/files/admin/file.txt"
 ```
@@ -45,4 +45,4 @@ Note: -k flag for self-signed cert (if applicable)
 
 ---
 
-Credentials are in Railway env vars for secrets. Nextcloud creds here for convenience (internal use only).
+All secrets via Railway env vars. No plaintext credentials in repo.
