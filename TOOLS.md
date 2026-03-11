@@ -26,8 +26,16 @@ rclone copy onedrive:Spex/file.txt /local/path/
 
 ## Nextcloud (Alternative)
 - Server: 64.23.225.208
-- WebDAV URL: https://64.23.225.208/remote.php/dav/files/admin/
+- WebDAV URL: http://64.23.225.208/remote.php/dav/files/admin/
 - Credentials: Set NEXTCLOUD_USER and NEXTCLOUD_PASS env vars
+- Note: HTTP only (no SSL configured)
+
+**Upload file:**
+```bash
+curl -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
+  -T /path/to/file.txt \
+  "http://64.23.225.208/remote.php/dav/files/admin/file.txt"
+```
 
 ## SendGrid
 - Domain: crabpass.ai (verified)
