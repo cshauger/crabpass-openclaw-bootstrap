@@ -24,6 +24,32 @@ config = {
     }
 }
 
+# Add minimax provider if API key is set and model is minimax
+minimax_api_key = os.environ.get('MINIMAX_API_KEY', '')
+if minimax_api_key and model.startswith('minimax/'):
+    config["models"] = {
+        "mode": "merge",
+        "providers": {
+            "minimax": {
+                "baseUrl": "https://api.minimax.io/anthropic",
+                "apiKey": minimax_api_key,
+                "api": "anthropic-messages",
+                "models": [
+                    {
+                        "id": "MiniMax-M2.1",
+                        "name": "MiniMax M2.1",
+                        "reasoning": False,
+                        "input": ["text"],
+                        "cost": {"input": 15, "output": 60, "cacheRead": 2, "cacheWrite": 10},
+                        "contextWindow": 200000,
+                        "maxTokens": 8192
+                    }
+                ]
+            }
+        }
+    }
+    print(f"Added MiniMax provider config")
+
 allowed_users = []
 if owner_id:
     allowed_users.append(owner_id)
@@ -48,17 +74,15 @@ print(f"Config written to {config_path}")
 workspace_dir = os.path.join(state_dir, 'workspace')
 os.makedirs(workspace_dir, exist_ok=True)
 
-# Create memory directory
 memory_dir = os.path.join(workspace_dir, 'memory')
 os.makedirs(memory_dir, exist_ok=True)
 
 email_address = f"{bot_username.lower()}@crabpass.ai" if bot_username else "yourbot@crabpass.ai"
 
-# AGENTS.md - Only create if doesn't exist
 agents_path = os.path.join(workspace_dir, 'AGENTS.md')
 if not os.path.exists(agents_path):
     with open(agents_path, 'w') as f:
-        f.write(f"""# AGENTS.md
+        f.write("""# AGENTS.md
 
 ## Memory System
 You wake up fresh each session. These files are your continuity:
@@ -81,7 +105,6 @@ You wake up fresh each session. These files are your continuity:
 else:
     print("AGENTS.md exists, preserving")
 
-# MEMORY.md - Only create if doesn't exist
 memory_path = os.path.join(workspace_dir, 'MEMORY.md')
 if not os.path.exists(memory_path):
     with open(memory_path, 'w') as f:
@@ -105,7 +128,6 @@ if not os.path.exists(memory_path):
 else:
     print("MEMORY.md exists, preserving")
 
-# SOUL.md - Only create if doesn't exist
 soul_path = os.path.join(workspace_dir, 'SOUL.md')
 if not os.path.exists(soul_path):
     with open(soul_path, 'w') as f:
@@ -115,11 +137,6 @@ You are a helpful AI assistant powered by CrabPass.
 
 ## Your Email
 Your email address is: **{email_address}**
-
-## Checking Email
-```bash
-curl -s "https://email-webhook-production-887d.up.railway.app/emails?bot_username={bot_username or 'YOUR_BOT_USERNAME'}&unread_only=true"
-```
 
 ## Important
 - Read AGENTS.md for memory instructions
@@ -133,7 +150,6 @@ Be helpful, concise, and friendly.
 else:
     print("SOUL.md exists, preserving")
 
-# Email skill
 skills_dir = os.path.join(workspace_dir, 'skills', 'email')
 os.makedirs(skills_dir, exist_ok=True)
 skill_path = os.path.join(skills_dir, 'SKILL.md')
@@ -142,27 +158,14 @@ with open(skill_path, 'w') as f:
 
 ## Your Email Address
 `{email_address}`
-
-## Check Emails
-```bash
-curl -s "https://email-webhook-production-887d.up.railway.app/emails?bot_username={bot_username or 'YOUR_BOT_USERNAME'}"
-```
-Add `&unread_only=true` for unread only.
-
-## Mark as Read
-```bash
-curl -s -X POST "https://email-webhook-production-887d.up.railway.app/emails/EMAIL_ID/read"
-```
 """)
 print("Created/updated email skill")
 
-# Only remove BOOTSTRAP.md (not needed after first boot)
 bootstrap_path = os.path.join(workspace_dir, 'BOOTSTRAP.md')
 if os.path.exists(bootstrap_path):
     os.remove(bootstrap_path)
     print("Removed BOOTSTRAP.md")
 
-# Setup rclone if provided
 rclone_config_b64 = os.environ.get('RCLONE_CONFIG_B64', '')
 if rclone_config_b64:
     rclone_dir = os.path.expanduser('~/.config/rclone')
