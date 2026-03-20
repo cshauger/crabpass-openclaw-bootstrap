@@ -1,40 +1,22 @@
 # TOOLS.md - Local Notes
 
 ## Telegram
-- Bot: @CrabFresh99Bot / @Shog99Bot (depending on deployment)
+- Bot: @Shog99Bot
 - Curtis's user ID: 8259734518
 
-## OneDrive (rclone)
-- Remote: `onedrive:`
-- Folder: `onedrive:Spex/` (Curtis's boundary - only access this folder)
-- Config: Auto-configured from RCLONE_CONFIG_B64 env var
+## Nextcloud (Primary Storage)
+- Remote: `nextcloud:`
+- Folder: `nextcloud:bots/Shog99Bot/`
+- Config: /home/openclaw/.config/rclone/rclone.conf
 
-**List files:**
+**Sync workspace to Nextcloud (run before redeploys!):**
 ```bash
-rclone ls onedrive:Spex/
+rclone sync /home/openclaw/.openclaw/workspace nextcloud:bots/Shog99Bot/ --exclude ".git/**"
 ```
 
-**Upload file:**
+**Download from Nextcloud:**
 ```bash
-rclone copy /path/to/file.txt onedrive:Spex/
-```
-
-**Download file:**
-```bash
-rclone copy onedrive:Spex/file.txt /local/path/
-```
-
-## Nextcloud (Alternative)
-- Server: 64.23.225.208
-- WebDAV URL: http://64.23.225.208/remote.php/dav/files/admin/
-- Credentials: Set NEXTCLOUD_USER and NEXTCLOUD_PASS env vars
-- Note: HTTP only (no SSL configured)
-
-**Upload file:**
-```bash
-curl -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
-  -T /path/to/file.txt \
-  "http://64.23.225.208/remote.php/dav/files/admin/file.txt"
+rclone copy nextcloud:bots/Shog99Bot/MEMORY.md /home/openclaw/.openclaw/workspace/
 ```
 
 ## SendGrid
@@ -44,10 +26,7 @@ curl -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASS" \
 ## GitHub
 - Token: Set via GITHUB_TOKEN env var
 
-## Airtable
-- Base: Stock Tracker (appp0mQjoNFff9lCU)
-- Token: Set via AIRTABLE_API_KEY env var
-
 ---
 
 All secrets via Railway env vars.
+Remember to sync to Nextcloud before any redeployment!
