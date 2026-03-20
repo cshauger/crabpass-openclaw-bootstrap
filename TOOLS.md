@@ -6,6 +6,7 @@
 
 ## Nextcloud (Primary Storage)
 - Remote: `nextcloud:`
+- URL: https://cloud.clawsign.ai
 - Folder: `nextcloud:bots/Shog99Bot/`
 - Config: /home/openclaw/.config/rclone/rclone.conf
 
@@ -19,14 +20,5 @@ rclone sync /home/openclaw/.openclaw/workspace nextcloud:bots/Shog99Bot/ --exclu
 rclone copy nextcloud:bots/Shog99Bot/MEMORY.md /home/openclaw/.openclaw/workspace/
 ```
 
-## SendGrid
-- Domain: crabpass.ai (verified)
-- API key: Set via SENDGRID_API_KEY env var
-
-## GitHub
-- Token: Set via GITHUB_TOKEN env var
-
 ---
-
-All secrets via Railway env vars.
 Remember to sync to Nextcloud before any redeployment!
