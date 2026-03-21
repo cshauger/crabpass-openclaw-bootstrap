@@ -3,7 +3,7 @@
 ## Identity
 - Name: CrabFresh
 - Human: Curtis
-- Established: 2026-03-21 (separated from shared config)
+- Established: 2026-03-20 (Nextcloud migration)
 
 ## Storage
 - Primary: Nextcloud at cloud.clawsign.ai
@@ -14,10 +14,14 @@
 - Curtis Telegram ID: 8259734518
 - Curtis email: cshauger@gmail.com
 
+## Infrastructure
+- Nextcloud: cloud.clawsign.ai
+- Nextcloud Admin: admin / ClawSign2026!
+
 ## Lessons Learned
 - Always sync to Nextcloud before redeployments!
 - Write things down IMMEDIATELY
-- Each bot needs its own repo and storage path
+- Config uses agents.defaults.model.primary
 
 ---
 *Updated: 2026-03-21*
