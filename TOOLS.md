@@ -8,17 +8,21 @@
 - Remote: `nextcloud:`
 - URL: https://cloud.clawsign.ai
 - Folder: `nextcloud:bots/Crabfresh/`
-- Config: /home/openclaw/.config/rclone/rclone.conf
+
+**List folders:**
+```bash
+rclone --config ~/.config/rclone/rclone.conf lsd nextcloud:
+```
 
 **Sync workspace to Nextcloud (run before redeploys!):**
 ```bash
-rclone sync /home/openclaw/.openclaw/workspace nextcloud:bots/Crabfresh/ --exclude ".git/**"
+rclone --config ~/.config/rclone/rclone.conf sync /home/openclaw/.openclaw/workspace nextcloud:bots/Crabfresh/ --exclude ".git/**"
 ```
 
 **Download from Nextcloud:**
 ```bash
-rclone copy nextcloud:bots/Crabfresh/MEMORY.md /home/openclaw/.openclaw/workspace/
+rclone --config ~/.config/rclone/rclone.conf copy nextcloud:bots/Crabfresh/ /home/openclaw/.openclaw/workspace/
 ```
 
 ---
-Remember to sync to Nextcloud before any redeployment!
+**Note:** OneDrive access removed. Use Nextcloud only.

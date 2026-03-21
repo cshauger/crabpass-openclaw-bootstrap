@@ -104,7 +104,7 @@ nextcloud_user = os.environ.get('NEXTCLOUD_USER', '')
 nextcloud_pass = os.environ.get('NEXTCLOUD_PASS', '')
 nextcloud_available = bool(nextcloud_url and nextcloud_user and nextcloud_pass)
 
-# TOOLS.md - Always recreate with current config
+# TOOLS.md - preserve if exists
 tools_content = f"""# TOOLS.md - Storage & Integrations
 
 ## Storage Access
@@ -186,10 +186,13 @@ tools_content += """## Memory Persistence
 
 """
 
-tools_path = os.path.join(workspace_dir, 'TOOLS.md')
-with open(tools_path, 'w') as f:
-    f.write(tools_content)
-print("Created TOOLS.md with storage instructions")
+tools_path = os.path.join(workspace_dir, "TOOLS.md")
+if not os.path.exists(tools_path):
+    with open(tools_path, "w") as f:
+        f.write("# TOOLS.md\n\nNo storage configured yet.")
+    print("Created placeholder TOOLS.md")
+else:
+    print("TOOLS.md exists, preserving")
 
 # AGENTS.md - Only create if doesn't exist
 agents_path = os.path.join(workspace_dir, 'AGENTS.md')
