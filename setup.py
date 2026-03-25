@@ -104,6 +104,17 @@ nextcloud_user = os.environ.get('NEXTCLOUD_USER', '')
 nextcloud_pass = os.environ.get('NEXTCLOUD_PASS', '')
 nextcloud_available = bool(nextcloud_url and nextcloud_user and nextcloud_pass)
 
+# === RESTORE FROM NEXTCLOUD FIRST ===
+# Pull existing workspace files before creating new ones
+if rclone_available and nextcloud_available:
+    storage_path = f"nextcloud:bots/{bot_name}/"
+    print(f"Attempting to restore workspace from {storage_path}")
+    restore_result = os.system(f"rclone --config ~/.config/rclone/rclone.conf copy {storage_path} {workspace_dir}/ 2>/dev/null")
+    if restore_result == 0:
+        print(f"Restored workspace from Nextcloud")
+    else:
+        print(f"No existing workspace in Nextcloud (or restore failed) - will create fresh")
+
 # TOOLS.md - preserve if exists
 tools_content = f"""# TOOLS.md - Storage & Integrations
 
