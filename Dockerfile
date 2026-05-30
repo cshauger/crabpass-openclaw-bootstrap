@@ -6,10 +6,13 @@ USER root
 # Install rclone
 RUN curl -sL https://rclone.org/install.sh | bash
 
-# Install pip and Python libraries for Office files
+# Install pip and Python libraries for Office files + Playwright
 RUN apt-get update && apt-get install -y python3-pip && \
-    pip3 install --break-system-packages requests openpyxl python-docx python-pptx pandas xlsxwriter && \
+    pip3 install --break-system-packages requests openpyxl python-docx python-pptx pandas xlsxwriter playwright && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Playwright browser (chromium only to save space)
+RUN playwright install chromium && playwright install-deps chromium
 
 # Find where user 1000's home is and set up there
 RUN mkdir -p /home/openclaw/.openclaw/workspace /home/openclaw/.config/rclone && \
@@ -27,13 +30,3 @@ RUN chown 1000:1000 /home/openclaw/.config/rclone/rclone.conf
 # Copy workspace files (memory, identity, etc.)
 COPY *.md /home/openclaw/.openclaw/workspace/
 RUN chown -R 1000:1000 /home/openclaw/.openclaw/workspace/
-
-USER 1000
-WORKDIR /app
-
-# Point to the correct location
-ENV HOME=/home/openclaw
-ENV OPENCLAW_STATE_DIR=/home/openclaw/.openclaw
-ENV OPENCLAW_CONFIG_PATH=/home/openclaw/.openclaw/config.json5
-
-ENTRYPOINT ["/bootstrap.sh"]
