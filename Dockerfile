@@ -6,13 +6,33 @@ USER root
 # Install rclone
 RUN curl -sL https://rclone.org/install.sh | bash
 
-# Install pip and Python libraries for Office files + Playwright
-RUN apt-get update && apt-get install -y python3-pip && \
-    pip3 install --break-system-packages requests openpyxl python-docx python-pptx pandas xlsxwriter playwright && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install system dependencies for Playwright first (before cleaning apt cache)
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libatspi2.0-0 \
+    libgtk-3-0 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Playwright browser (chromium only to save space)
-RUN playwright install chromium && playwright install-deps chromium
+# Install Python packages including Playwright
+RUN pip3 install --break-system-packages requests openpyxl python-docx python-pptx pandas xlsxwriter playwright
+
+# Install Chromium browser for Playwright (system deps already installed above)
+RUN playwright install chromium
 
 # Find where user 1000's home is and set up there
 RUN mkdir -p /home/openclaw/.openclaw/workspace /home/openclaw/.config/rclone && \
