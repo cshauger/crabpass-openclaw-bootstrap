@@ -6,9 +6,14 @@ USER root
 # Install rclone
 RUN curl -sL https://rclone.org/install.sh | bash
 
-# Install pip and Python libraries for Office files
-RUN apt-get update && apt-get install -y python3-pip && \
-    pip3 install --break-system-packages openpyxl python-docx python-pptx pandas xlsxwriter && \
+# Install pip, Python libraries, and Playwright dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+    libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+    libgbm1 libasound2 libpango-1.0-0 libcairo2 && \
+    pip3 install --break-system-packages openpyxl python-docx python-pptx pandas xlsxwriter playwright && \
+    playwright install chromium && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Find where user 1000's home is and set up there
