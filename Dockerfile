@@ -3,8 +3,10 @@ FROM ghcr.io/openclaw/openclaw:latest
 
 USER root
 
-# Install rclone
-RUN curl -sL https://rclone.org/install.sh | bash
+# Install unzip first (needed for rclone), then rclone
+RUN apt-get update && apt-get install -y unzip && \
+    curl -sL https://rclone.org/install.sh | bash && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install pip, Python libraries, and Playwright dependencies
 RUN apt-get update && apt-get install -y \
