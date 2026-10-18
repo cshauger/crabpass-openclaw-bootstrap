@@ -12,8 +12,7 @@ config = {
     "gateway": {"mode": "local"},
     "agents": {
         "defaults": {
-            "model": {"primary": model},
-            
+            "model": {"primary": model}
         }
     },
     "channels": {
