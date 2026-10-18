@@ -13,7 +13,7 @@ config = {
     "agents": {
         "defaults": {
             "model": {"primary": model},
-            "compaction": {"reserveTokensFloor": 4000}
+            
         }
     },
     "channels": {
