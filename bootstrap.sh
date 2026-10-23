@@ -3,8 +3,25 @@ set -e
 
 echo "=== OpenClaw Bootstrap ==="
 
-# Run Python setup to create config
+# Run Python setup first (creates rclone config)
 python3 /setup.py
+
+# Pull secrets from Nextcloud using rclone
+echo ""
+echo "Fetching secrets from Nextcloud..."
+if rclone copy nextcloud:bots/ShogMini/shogmini-secrets.json /tmp/ 2>/dev/null; then
+    if [ -f /tmp/shogmini-secrets.json ]; then
+        echo "Loading secrets..."
+        # Export each key-value pair as environment variable
+        eval $(cat /tmp/shogmini-secrets.json | jq -r 'to_entries|.[]|"export \(.key)=\(.value|@sh)"')
+        rm /tmp/shogmini-secrets.json
+        echo "Secrets loaded successfully."
+    else
+        echo "Warning: secrets file not downloaded."
+    fi
+else
+    echo "Warning: could not fetch secrets from Nextcloud, continuing..."
+fi
 
 echo ""
 echo "Starting OpenClaw gateway..."
