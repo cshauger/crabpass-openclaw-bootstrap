@@ -12,10 +12,11 @@ echo "Fetching secrets from Nextcloud..."
 if rclone copy nextcloud:bots/ShogMini/shogmini-secrets.json /tmp/ 2>/dev/null; then
     if [ -f /tmp/shogmini-secrets.json ]; then
         echo "Loading secrets..."
-        # Export each key-value pair as environment variable
-        eval $(cat /tmp/shogmini-secrets.json | jq -r 'to_entries|.[]|"export \(.key)=\(.value|@sh)"')
-        rm /tmp/shogmini-secrets.json
-        echo "Secrets loaded successfully."
+        # Write to env file and source it
+        jq -r 'to_entries[] | "export " + .key + "=" + (.value | @sh)' /tmp/shogmini-secrets.json > /tmp/secrets.env
+        . /tmp/secrets.env
+        rm /tmp/shogmini-secrets.json /tmp/secrets.env
+        echo "Secrets loaded. TELEGRAM_BOT_TOKEN length: ${#TELEGRAM_BOT_TOKEN}"
     else
         echo "Warning: secrets file not downloaded."
     fi
