@@ -12,11 +12,18 @@ echo "Fetching secrets from Nextcloud..."
 if rclone copy nextcloud:bots/ShogMini/shogmini-secrets.json /tmp/ 2>/dev/null; then
     if [ -f /tmp/shogmini-secrets.json ]; then
         echo "Loading secrets..."
-        # Write to env file and source it
-        jq -r 'to_entries[] | "export " + .key + "=" + (.value | @sh)' /tmp/shogmini-secrets.json > /tmp/secrets.env
-        . /tmp/secrets.env
-        rm /tmp/shogmini-secrets.json /tmp/secrets.env
-        echo "Secrets loaded. TELEGRAM_BOT_TOKEN length: ${#TELEGRAM_BOT_TOKEN}"
+        # Use Python to parse JSON and export vars
+        eval $(python3 -c "
+import json
+with open('/tmp/shogmini-secrets.json') as f:
+    secrets = json.load(f)
+for k, v in secrets.items():
+    # Escape single quotes in values
+    v_escaped = str(v).replace(\"'\", \"'\\\"'\\\"'\")
+    print(f\"export {k}='{v_escaped}'\")
+")
+        rm /tmp/shogmini-secrets.json
+        echo "Secrets loaded. TELEGRAM_BOT_TOKEN set: $([ -n \"$TELEGRAM_BOT_TOKEN\" ] && echo 'yes' || echo 'no')"
     else
         echo "Warning: secrets file not downloaded."
     fi
